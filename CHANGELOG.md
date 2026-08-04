@@ -3,6 +3,22 @@
 All notable changes to ENLOOP are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+- **Kalodata MCP server** (`mcp/kalodata/`) — a zero-dependency stdio MCP server
+  wrapping Kalodata's KaloPilot agent, so TikTok Shop data (products, shops,
+  creators, videos, livestreams, categories) is reachable as MCP tools:
+  `kalodata_ask`, `kalodata_query`, `kalodata_result`. Kalodata ships no MCP
+  server of its own; this wraps its async submit/poll HTTP API.
+- **`.mcp.json`** at the repo root registering that server for Claude Code.
+- **`mcp/kalodata/test-protocol.mjs`** — runs the server over stdio against a
+  local mock of the KaloPilot API. Covers the handshake, tool discovery, the
+  submit → poll → render path, follow-up threading, and both auth failure
+  modes, without network access or credit spend.
+
+The server is optional and independent of the skill — ENLOOP runs without it.
+
 ## [3.0.0] — 2026-07-29
 
 First public release.

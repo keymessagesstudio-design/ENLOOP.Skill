@@ -76,6 +76,14 @@ git clone https://github.com/YOUR-USERNAME/enloop.git ~/.claude/skills/enloop
 
 ENLOOP answers in the user's language and **defaults to Thai** — the block, the answer, and the grade. To make English the default, change the last clause of the `description` field in the frontmatter and hard rule 16.
 
+## Optional: TikTok Shop data over MCP
+
+`mcp/kalodata/` is a small, dependency-free MCP server that gives Claude live
+TikTok Shop data — products, shops, creators, videos, livestreams, categories —
+through Kalodata's KaloPilot agent. It is independent of the skill: ENLOOP works
+without it, and the server works without ENLOOP. Setup and tools are documented
+in [`mcp/kalodata/README.md`](mcp/kalodata/README.md).
+
 ## Known trade-offs
 
 Stated up front so you can decide before installing rather than after.

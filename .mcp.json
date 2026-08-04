@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "kalodata": {
+      "command": "node",
+      "args": ["./mcp/kalodata/server.mjs"],
+      "env": {
+        "KALODATA_TOKEN": "${KALODATA_TOKEN:-}"
+      }
+    }
+  }
+}
