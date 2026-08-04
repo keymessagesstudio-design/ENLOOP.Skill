@@ -1,58 +1,48 @@
 # ELEMENTS — นายขนมต้ม
 
 ทะเบียน element ตามกติกา §7.6 ของ `video-production-spec.md`
-**เจนใบใหม่เมื่อไหร่ ต้องเพิ่มแถวทันที ไม่ใช่ตอนสิ้นวัน**
 
-- ชื่อ: `<CODE>_<slug>_<model>_<YYYYMMDD>[_vN]`
-- `job_id` ส่งเข้า `medias[].value` ได้ตรง ๆ ไม่ต้องอัปโหลดไฟล์ใหม่
-- ห้ามลบแถวที่เลิกใช้ ให้เปลี่ยนสถานะแทน
+**`element_id` คือค่าที่เอาไปใช้จริง** ฝัง `<<<element_id>>>` ลงใน `params.prompt` ได้เลย
+ระบบจะแทนภาพให้เองและเขียนเป็น `@ชื่อ` — ไม่ต้องส่งผ่าน `image_references`
 
----
-
-## ชุดที่ใช้จริง — v2 (gpt_image_2 · 1k · medium · 16:9 · 2026-08-04)
-
-ทั้งเก้าใบมาจากโมเดลเดียว รอบเดียว เพื่อให้ลุคภาพเป็นชุดเดียวกัน
-
-| CODE | ชื่อ | job_id | ใช้ที่ | สถานะ |
-|---|---|---|---|---|
-| `CH-01` | `CH-01_fighter-topknot-scarred_gptimg2_20260804_v2` | `882d9fc0-5905-4fd2-8b26-97673a40a0cf` | EP1 C4 · **ทุกตอน** | ✅ ใช้จริง |
-| `CH-02` | `CH-02_old-man-bundle_gptimg2_20260804_v2` | `b5534bc1-893c-4ab3-a074-745a4a735db5` | EP1 C1–C3 | ✅ ใช้จริง |
-| `AN-01` | `AN-01_officer-bored-cape_gptimg2_20260804_v2` | `af18aa47-f12d-40b8-98b4-0372e2dc77ab` | EP1 C2–C4 · **ทุกตอน** | ✅ ใช้จริง |
-| `WD-01` | `WD-01_guard-redjacket-turban_gptimg2_20260804_v2` | `476f904b-99a7-486a-94ea-938fbd0217fd` | EP1 C1–C4 · **ทุกตอน** | ✅ ใช้จริง |
-| `CROWD-01` | `CROWD-01_captives-seven-distinct_gptimg2_20260804_v2` | `a2aaa47e-38d4-4722-a329-42062399957f` | EP1 C1–C3 · **ทุกตอน** | ✅ ใช้จริง |
-| `PR-01` | `PR-01_cloth-bundle-mended_gptimg2_20260804_v2` | `95a274a6-e272-4386-843c-582c1d4b0b17` | EP1 C1, C2 | ✅ ใช้จริง |
-| `LOC-01` | `LOC-01_burning-city-night-rain_gptimg2_20260804_v2` | `26173c95-15ca-4205-bac5-4cab3f273e6c` | EP1 C1, C2 | ✅ ใช้จริง |
-| `LOC-02` | `LOC-02_river-crossing-dusk_gptimg2_20260804_v2` | `2d3ccebd-438f-45a4-839e-e5467c054b2a` | EP1 C3 | ✅ ใช้จริง |
-| `LOC-03` | `LOC-03_night-clearing-embers_gptimg2_20260804_v2` | `ddee730c-3d3b-44b7-803b-a80329e7770f` | EP1 C4 | ✅ ใช้จริง |
-
-## ชุดเดิม — v1 (เก็บไว้ ห้ามลบ)
-
-| CODE | ชื่อ | job_id | โมเดล | สถานะ |
-|---|---|---|---|---|
-| `CH-01` | `CH-01_fighter-topknot-scarred_soul2_20260804` | `a35f66f5-d315-4dbd-a41c-80ff6ce29c41` | soul_2 2k | 🔁 แทนที่ด้วย v2 — คนละโมเดลกับชุดหลัก ลุคไม่เข้ากัน |
-| `CH-02` | `CH-02_old-man-bundle_gptimg2_20260804` | `b7d08b5f-2c49-476e-b17e-50eae8140067` | gpt_image_2 1k | 🔁 แทนที่ด้วย v2 — เจนใหม่พร้อมกันทั้งชุด |
-| `AN-01` | `AN-01_officer-bored-cape_gptimg2_20260804` | `86df4037-98e7-4273-b513-4b50e97d4732` | gpt_image_2 1k | 🔁 แทนที่ด้วย v2 — เจนใหม่พร้อมกันทั้งชุด |
-| `WD-01` | `WD-01_guard-redjacket-turban_soul2_20260804` | `d7466ac0-1ca3-4cf5-ac95-988cd42658ac` | soul_2 2k | 🔁 แทนที่ด้วย v2 — คนละโมเดลกับชุดหลัก |
-| `CROWD-01` | `CROWD-01_captives-seven-distinct_soul2_20260804` | `efc782f3-1553-4fbf-b2b7-571558a72a93` | soul_2 2k | 🔁 แทนที่ด้วย v2 — คนละโมเดลกับชุดหลัก |
-| `PR-01` | `PR-01_cloth-bundle-mended_gptimg2_20260804` | `55914b51-4df6-4a75-8f31-506225b445dc` | gpt_image_2 1k | 🔁 แทนที่ด้วย v2 |
-| `LOC-01` | `LOC-01_burning-city-night-rain_soul2_20260804` | `8273ae87-838e-49c1-86be-1c3efb50ab7e` | soul_2 2k | 🔁 แทนที่ด้วย v2 — คนละโมเดลกับชุดหลัก |
-| `LOC-02` | `LOC-02_river-crossing-dusk_gptimg2_20260804` | `6c717232-b725-44c2-ba86-1e80bed5b135` | gpt_image_2 1k | 🔁 แทนที่ด้วย v2 |
-| `LOC-03` | `LOC-03_night-clearing-embers_gptimg2_20260804` | `c9cabb9e-215e-401f-b74c-a81c7718c6b4` | gpt_image_2 1k | 🔁 แทนที่ด้วย v2 |
+`job_id` เก็บไว้เผื่อต้องสร้าง Element ใหม่จากภาพเดิม
 
 ---
 
-## แผนการส่ง reference ต่อคลิป (EP1)
+## Reference Elements ที่ใช้งานได้จริง
 
-ลำดับสำคัญ — ตัวแรกได้น้ำหนักมากสุด ดู §7.2
+ภาพต้นทางทั้งหมด: gpt_image_2 · 1k · medium · 16:9 · 2026-08-04
 
-| คลิป | ชนิดช็อต | `image_references` เรียงตามนี้ |
-|---|---|---|
-| EP1 C1 | คนหลายคน | `LOC-01` → `CROWD-01` → `WD-01` |
-| EP1 C2 | คนหลายคน + ตัวร้าย | `LOC-01` → `AN-01` → `CROWD-01` → `WD-01` |
-| EP1 C3 | คนหลายคน + ตัวร้าย | `LOC-02` → `AN-01` → `CROWD-01` → `WD-01` |
-| EP1 C4 | ตัวเอกเป็นหลัก | `CH-01` → `LOC-03` → `AN-01` → `WD-01` |
+| CODE | ชื่อ Element | `element_id` | job_id ต้นทาง | ใช้ที่ |
+|---|---|---|---|---|
+| `CH-01` | `CH-01-fighter` | `467cc8c6-bfcc-4d82-8ec0-fbbcddcb9e49` | `882d9fc0-…` | EP1 C4 · ทุกตอน |
+| `CH-02` | `CH-02-old-man` | `b39dd5fa-e733-4460-bee7-81112ae484f3` | `b5534bc1-…` | EP1 C1–C3 |
+| `AN-01` | `AN-01-officer` | `51a8592a-0aea-4a7d-8424-d9d274bf85fb` | `af18aa47-…` | EP1 C2–C4 · ทุกตอน |
+| `WD-01` | `WD-01-guard-costume` | `0291680d-7910-4a93-a2a7-9858412ab454` | `476f904b-…` | EP1 C1–C4 · ทุกตอน |
+| `CROWD-01` | `CROWD-01-captives` | `78341372-c821-4ecd-bccd-63c27a71327c` | `a2aaa47e-…` | EP1 C1–C3 · ทุกตอน |
+| `PR-01` | `PR-01-cloth-bundle` | `6c86b912-0507-4e6a-b162-a9f510d3fffd` | `95a274a6-…` | EP1 C1, C2 |
+| `LOC-01` | `LOC-01-burning-city` | `ba23df37-bf64-4358-aa39-90cc9a0cbc43` | `26173c95-…` | EP1 C1, C2 |
+| `LOC-02` | `LOC-02-river-crossing` | `7739c543-5d1b-46ba-ae22-d69e0682b61a` | `2d3ccebd-…` | EP1 C3 |
+| `LOC-03` | `LOC-03-night-clearing` | `dd386f39-02ad-4c49-aa2c-6d36f2530267` | `ddee730c-…` | EP1 C4 |
 
-**`CH-01` ส่งได้เฉพาะ C4 เท่านั้น** — คลิปอื่นมีคนหลายคน ส่งเข้าไปแล้วทุกคนจะหน้าเหมือนกันหมด (§13-2)
+**ต้องเก็บกวาด:** มี element ชื่อ `LOC-01` อีกตัว (`c869c11a-3f1f-4036-a892-0f0bc70ed5cd`)
+ไม่มีคำอธิบาย ไม่ได้อยู่ในแผนนี้ — ลบทิ้งเพื่อไม่ให้ชนกับ `LOC-01-burning-city`
+
+---
+
+## Element ที่ต้องใส่ในแต่ละคลิป (EP1)
+
+ใส่เป็น `<<<element_id>>>` ในพรอมป์ **ไม่ต้องใช้ `image_references` อีก**
+
+| คลิป | Element ที่ต้องอ้าง |
+|---|---|
+| EP1 C1 | `LOC-01` `CROWD-01` `WD-01` `CH-02` `PR-01` |
+| EP1 C2 | `LOC-01` `AN-01` `CH-02` `PR-01` `CROWD-01` `WD-01` |
+| EP1 C3 | `LOC-02` `AN-01` `CH-02` `CROWD-01` `WD-01` |
+| EP1 C4 | `LOC-03` `CH-01` `AN-01` `WD-01` |
+
+**`CH-01` ยังคงใส่ได้เฉพาะ C4** — แม้ Element จะผูกหน้าเข้ากับชื่อแล้ว แต่คลิปที่คนเยอะยังเสี่ยง
+ให้ตัวประกอบหยิบหน้าตัวเอกไปใช้ ปลอดภัยกว่าถ้าไม่อ้างถึงเขาในคลิปที่เขาไม่ใช่จุดสนใจ
 
 ## สภาพเครื่องแต่งกายสะสม (`WD` state) — EP1
 
