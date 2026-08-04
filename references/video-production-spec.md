@@ -26,18 +26,22 @@ clip_seconds:     15                     # ความยาวต่อคล�
 aspect:           "9:16"                 # 9:16 แนวตั้ง | 16:9 แนวนอน
 resolution:       "720p"
 video_model:      seedance_2_0           # ดูตาราง §3
-video_mode:       fast                   # std | fast | mini
-look:             "photoreal cinematic, ARRI Alexa Mini + Master Prime"
+video_mode:       std                    # std | fast | mini  — งานสมจริงต้อง std (§13-5)
+bitrate_mode:     high                   # high = ลด compression mush บนภาพสมจริง
+look:             live-action            # live-action | stylized  — ดู §6.4
+# ห้ามใส่คำว่า cinematic / epic / 8k / hyperrealistic ลงในช่องนี้ — มันคือคำที่ดึงไป CG (§13-5)
 
 # --- เสียง ---
-native_audio:     true                   # true = ให้โมเดลใส่ SFX มาด้วย
-music:            false                  # false = ห้ามมีดนตรี (ต้องเขียนย้ำใน prompt)
+native_audio:     false                  # false = ปิดเสียงโมเดล ทำ SFX เองตอนตัด (§13-1, §13-4)
+music:            false
 vo_engine:        elevenlabs             # elevenlabs (นอกระบบ) | seed_audio (ในระบบ)
 subtitles:        true
 
-# --- นักแสดง/สถานที่ ---
+# --- นักแสดง/สถานที่/เครื่องแต่งกาย ---
 characters:       2                      # ตัวละครที่ต้องหน้าเหมือนกันทุกตอน
 locations:        4                      # ฉากหลักที่ใช้ซ้ำ
+costumes:         2                      # ชุดของกลุ่มคนที่ไม่ใช่ตัวเอก — ต้องมี sheet (§13-3)
+crowd_sheet:      true                   # true ถ้ามีฉากที่มีคนหลายคนในเฟรม (§13-2)
 
 # --- งบ ---
 credits_on_hand:  781.5
@@ -56,11 +60,13 @@ credits_on_hand:  781.5
 | คีย์เฟรม | `= คลิปทั้งหมด` | 40 |
 | Character sheet | `= characters` | 2 |
 | Location sheet | `= locations` | 4 |
-| **ภาพที่ต้องเจนรวม** | `คีย์เฟรม + characters + locations` | **46** |
-| เครดิตค่าคลิป | `คลิปทั้งหมด × clip_seconds × อัตรา/วินาที (§3)` | 40 × 15 × 3.5 = **2,100** |
-| เครดิตค่าภาพ | `ภาพรวม × 0.12` (soul_2) | ~5.5 |
-| **ทำได้กี่คลิปด้วยเครดิตที่มี** | `floor(credits_on_hand ÷ ราคา/คลิป)` | 781.5 ÷ 52.5 = **14 คลิป (3.5 ตอน)** |
-| **ทำได้กี่ตอนเต็ม** | `floor(ข้างบน ÷ คลิปต่อตอน)` | **3 ตอน** |
+| Costume sheet | `= costumes` | 2 |
+| Crowd sheet | `crowd_sheet ? 1 : 0` | 1 |
+| **ภาพที่ต้องเจนรวม** | `คีย์เฟรม + characters + locations + costumes + crowd` | **49** |
+| เครดิตค่าคลิป | `คลิปทั้งหมด × clip_seconds × อัตรา/วินาที (§3)` | 40 × 15 × 4.5 = **2,700** |
+| เครดิตค่าภาพ | `ภาพรวม × 0.12` (soul_2) | ~6 |
+| **ทำได้กี่คลิปด้วยเครดิตที่มี** | `floor(credits_on_hand ÷ ราคา/คลิป)` | 781.5 ÷ 67.5 = **11 คลิป** |
+| **ทำได้กี่ตอนเต็ม** | `floor(ข้างบน ÷ คลิปต่อตอน)` | **2 ตอน** |
 
 > ถ้าเครดิตไม่พอทั้งซีรีส์ **ให้ทำทีละตอนจนจบตอน** อย่าเจนครึ่ง ๆ กลาง ๆ ทุกตอน
 > ตอนที่ไม่ครบทุกคลิปคือตอนที่ปล่อยไม่ได้ = เครดิตที่จ่ายไปเปล่า
@@ -76,7 +82,8 @@ credits_on_hand:  781.5
 | `seedance_2_0_mini` | — | **2.5** | 25 | 37.5 | รองรับ |
 | `gemini_omni` | — | **3.0** | 30 | ไม่ได้ (สูงสุด 10 วิ) | รองรับ |
 
-**เปิด/ปิด `generate_audio` ราคาเท่ากัน** → เปิดไว้คุ้มกว่า ได้ SFX ฟรีในตัว
+**เปิด/ปิด `generate_audio` ราคาเท่ากัน** → **ปิดไปเลย** เสียงจากโมเดลต่อกันระหว่างคลิปไม่ได้
+และไม่เคารพคำสั่ง `no music` (§13-1) ปิดแล้วไม่ประหยัดขึ้น แต่ก็ไม่แพงขึ้น และได้เสียงที่คุมได้จริง
 
 | โมเดลภาพ | ราคา/ภาพ | ใช้ทำอะไร |
 |---|---|---|
@@ -101,14 +108,23 @@ credits_on_hand:  781.5
 | # | ขั้น | จำนวน | โมเดล | ราคา | ผ่านแล้วไปต่อได้เมื่อ |
 |---|---|---|---|---|---|
 | 1 | **Character sheet** | `characters` | `soul_2` 16:9 | ฟรี | หน้า/ทรงผม/เครื่องแต่งกาย นิ่งพอจะใช้อ้างอิงได้ทั้งเรื่อง |
-| 2 | **Location sheet** | `locations` | `soul_2` หรือ seedream, ตาม `aspect` | ฟรี | โทนสีและยุคสมัยตรงกันทุกใบ |
-| 3 | **คีย์เฟรม** | `= คลิปทั้งหมด` | เดียวกับข้อ 1 + แนบ sheet | ฟรี | เรียงแล้วอ่านเป็นเรื่องได้โดยไม่ต้องมีเสียง |
-| 4 | **ตรวจ storyboard** | — | — | ฟรี | **ประตูเงิน — ห้ามข้าม** ใบไหนหน้าไม่ตรง sheet แก้ที่นี่ ไม่ใช่ตอนเป็นคลิป |
-| 5 | **คลิป** | `= คลิปทั้งหมด` | `video_model` | เสียเงิน | ทำทีละตอนจนครบตอน |
-| 6 | **พากย์** | `= คลิปทั้งหมด` | `vo_engine` | ขึ้นกับ engine | เสียงเดียวตลอดเรื่อง ล็อก voice id |
-| 7 | **ตัดต่อ + ซับ** | — | นอกระบบ | — | ซับจับเวลาจากไฟล์เสียง ไม่ใช่จากสคริปต์ |
+| 2 | **Costume sheet** | `costumes` | `soul_2` 16:9 | ฟรี | ชุดของกลุ่มที่ไม่ใช่ตัวเอก **ห้ามข้าม** ไม่งั้นได้ชุดผิดชาติ (§13-3) |
+| 3 | **Crowd sheet** | 1 (ถ้ามีฉากคนเยอะ) | `soul_2` ตาม `aspect` | ฟรี | คน 5–8 คน หน้าตาต่างกันชัด กัน identity bleed (§13-2) |
+| 4 | **Location sheet** | `locations` | `soul_2` หรือ seedream, ตาม `aspect` | ฟรี | โทนสีและยุคสมัยตรงกันทุกใบ |
+| 5 | **คีย์เฟรม** | `= คลิปทั้งหมด` | เดียวกับข้อ 1 + แนบ sheet | ฟรี | เรียงแล้วอ่านเป็นเรื่องได้โดยไม่ต้องมีเสียง |
+| 6 | **ตรวจ storyboard** | — | — | ฟรี | **ประตูเงิน — ห้ามข้าม** ดูเกณฑ์ใต้ตาราง |
+| 7 | **คลิปทดสอบ 1 อัน** | 1 | `video_model` | เสียเงิน 1 คลิป | **ประตูเงินที่สอง** ผ่านแล้วค่อยยิงที่เหลือ (§13-6) |
+| 8 | **คลิปที่เหลือ** | `= คลิปทั้งหมด − 1` | `video_model` | เสียเงิน | ทำทีละตอนจนครบตอน |
+| 9 | **พากย์** | `= คลิปทั้งหมด` | `vo_engine` | ขึ้นกับ engine | เสียงเดียวตลอดเรื่อง ล็อก voice id |
+| 10 | **SFX + ตัดต่อ + ซับ** | — | นอกระบบ | — | ทำเสียงบรรยากาศเส้นเดียวยาวทั้งตอน แล้ววาง spot SFX ทับ (§13-4) |
 
-**ทำไมข้อ 4 ถึงสำคัญ:** ข้อ 1–3 ฟรีทั้งหมด ข้อ 5 คือทั้งงบ ทุกความผิดพลาดที่จับได้ก่อนข้อ 5 ราคาศูนย์
+**ประตูเงินที่หนึ่ง (ข้อ 6) ต้องผ่านสามข้อนี้ก่อนจ่ายเงิน:**
+1. ภาพนิ่ง **ดูเหมือนภาพถ่ายจริง ไม่ใช่ CG** — ถ้าภาพนิ่งยังเป็นเกม คลิปจะเป็นเกมแน่นอน (§13-5ข)
+2. หน้าตัวละครตรง sheet และ **คนอื่นในเฟรมหน้าไม่ซ้ำกับตัวเอก**
+3. เครื่องแต่งกายตรง costume sheet ไม่ใช่ชุดของชาติอื่น
+
+**ทำไมสองประตูนี้ถึงสำคัญ:** ข้อ 1–6 ฟรีทั้งหมด ข้อ 8 คือทั้งงบ
+ทุกความผิดพลาดที่จับได้ก่อนข้อ 7 ราคาศูนย์ · ที่จับได้ตอนข้อ 7 ราคา 1 คลิป · ที่จับได้ตอนข้อ 8 ราคายกตอน
 
 ---
 
@@ -117,7 +133,7 @@ credits_on_hand:  781.5
 ### 5.1 พรีเช็คราคา (ทำก่อนเสมอ — ไม่ส่งงาน ไม่หักเครดิต)
 ```json
 { "params": { "model": "seedance_2_0", "prompt": "cost probe", "duration": 15,
-  "resolution": "720p", "mode": "fast", "aspect_ratio": "9:16", "get_cost": true } }
+  "resolution": "720p", "mode": "std", "aspect_ratio": "9:16", "get_cost": true } }
 ```
 
 ### 5.2 Character sheet (ฟรี)
@@ -136,16 +152,20 @@ credits_on_hand:  781.5
 ### 5.4 คลิป (เสียเงิน) — ยิงทีละชุดไม่เกิน 12
 ```json
 { "requests": [ { "index": 1, "params": {
-  "model": "seedance_2_0", "mode": "fast", "duration": 15,
+  "model": "seedance_2_0", "mode": "std", "duration": 15,
   "resolution": "720p", "aspect_ratio": "9:16",
-  "generate_audio": true, "genre": "drama",
+  "bitrate_mode": "high", "generate_audio": false, "genre": "drama",
   "prompt": "<§6.3 จังหวะตัด> <§6.4 BASE LOOK>",
   "medias": [
     { "role": "start_image",      "value": "<keyframe_job_id>" },
-    { "role": "image_references", "value": "<character_sheet_job_id>" },
-    { "role": "image_references", "value": "<location_sheet_job_id>" } ] } } ] }
+    { "role": "image_references", "value": "<location_sheet_job_id>" },
+    { "role": "image_references", "value": "<costume_sheet_job_id>" } ] } } ] }
 ```
 เครื่องมือ: `generate_video_batch` → `jobs_wait` (ทีละ ≤12) → `show_generation_by_ids` ครั้งเดียว
+
+> **สังเกตว่า character sheet ไม่ได้อยู่ในตัวอย่างนี้** — ตัวอย่างนี้คือช็อตที่มีคนหลายคน
+> ส่ง `CH` เข้าไปเมื่อไหร่ ทุกคนในเฟรมจะได้หน้าเดียวกัน (§13-2)
+> ช็อตที่ตัวเอกอยู่คนเดียวเท่านั้นถึงจะส่ง `CH` และเมื่อส่งแล้ว **ให้ส่งเป็นตัวแรกของ `image_references`**
 
 ### 5.5 ขอใช้โควต้าฟรี
 เติม `"use_unlim": true` ในทุก request ของรอบนั้น **ส่งไปเลย อย่าไปเช็คก่อนว่ามีสิทธิ์ไหม** —
@@ -254,19 +274,81 @@ only breath over SHOT E (accent layer). No music, no melody, no drums.
 - **ห้ามใช้ OTS กับช็อตที่ไม่มีคนอยู่ในเฟรม** โมเดลจะสร้างคนขึ้นมาเอง
 - **ตัวละครห้ามขยับปากพูด** ถ้าใช้พากย์แยก → เขียน `characters do not speak, mouths closed`
 - ต้องมีการเคลื่อนไหวตั้งแต่เฟรมแรก → เขียน `motion starts on frame one`
+- **ช็อตที่มีคนมากกว่าหนึ่งคน ห้ามส่ง character reference เข้าไปเฉย ๆ** → §13-2 identity bleed
+- **ห้ามเรียกเครื่องแต่งกายด้วยชื่อชาติ** (`Burmese soldier`, `Siamese guard`) → §13-3
 
 ### 6.4 BASE LOOK — ต่อท้ายทุก prompt ห้ามแก้ระหว่างเรื่อง
+
+**เวอร์ชัน live-action** (ใช้เมื่อ `look: live-action`) — เขียนพฤติกรรมของกล้องจริง ไม่ใช่ชื่อรุ่นกล้อง
+
 ```
-[LOOK จาก SETTINGS], filmic latitude, gentle highlight rolloff, fine organic grain,
-shallow depth of field. Lighting is practical only. Palette [ระบุ 3–4 สี], no
-teal-orange grade. [ยุคสมัย/โลกของเรื่อง], no modern objects, no printed text in
-frame. Faces stay identical to the character reference.
+Live-action footage recorded on a large-format digital cinema camera with
+spherical prime lenses at a wide stop. Real photographic behaviour: 180-degree
+shutter motion blur on everything that moves, true optical depth of field with
+focus falling off gradually across the frame, slight focus breathing on any
+reframe, mild veiling flare and faint chromatic aberration only where a strong
+practical light hits the glass, visible sensor noise in the shadows, highlights
+that clip softly instead of glowing. Human imperfection: uneven skin with pores
+and blemishes, sweat, dirt in the creases, stray hair, asymmetric faces, cloth
+that hangs and creases under its own weight. Handheld micro-movement, slightly
+imperfect framing, subjects occasionally a touch soft. Colour is muted and
+photographic — [ระบุ 3–4 สี], no teal-and-orange grade, no colour cast, no glow,
+no bloom. [ยุคสมัย/โลกของเรื่อง], no modern objects, no printed text in frame.
+
+NOT: not a video game, not a game cinematic, not a game engine capture, not CGI,
+not a 3D render, not animation, not anime, not concept art, not a matte painting,
+no Unreal Engine look, no Octane render, no plastic or waxy skin, no smooth
+flawless surfaces, no rim light on every subject, no volumetric god rays, no
+floating particles, no over-saturated colour, no HDR look, no digital sharpening
+halos, no airbrushing.
 No on-screen text, no subtitles, no watermark, no logo.
+```
+
+**บรรทัด AUDIO ใส่ก็ต่อเมื่อ `native_audio: true` เท่านั้น**
+```
 AUDIO: diegetic sound effects only — no music, no score, no singing, no spoken
 dialogue, no voiceover.
 ```
-> ถ้ามีดนตรีหลุดมา เติมท้าย: `absolutely no musical instruments, no drums, no melody, room tone only`
-> ยังหลุดอีก → `generate_audio: false` แล้วใส่ SFX เองตอนตัดต่อ
+ถ้า `native_audio: false` **ห้ามใส่บรรทัดนี้เลย** การสั่งเรื่องเสียงในคลิปที่ปิดเสียงอยู่
+ทำให้โมเดลเอา budget ไปคิดเรื่องที่ไม่ได้ใช้
+
+> **คำที่ห้ามอยู่ใน prompt ของงาน live-action:** `cinematic` · `epic` · `dramatic lighting` ·
+> `8k` · `4k` (ในเชิงคุณภาพ) · `hyperrealistic` · `ultra realistic` · `masterpiece` ·
+> `unreal engine` · `octane` · `render` · `artstation` · `concept art` · `movie poster`
+> คำพวกนี้อยู่ในชุดข้อมูลคู่กับภาพ CG และภาพเกม ยิ่งใส่ยิ่งได้เกม (§13-5)
+
+### 6.5 Costume sheet — จำเป็นทุกครั้งที่มีกลุ่มคนที่ไม่ใช่ตัวเอก
+
+```
+Costume reference sheet, one person standing in a neutral pose, front view on the
+left and back view on the right, plain mid-grey seamless background, even flat
+lighting, full head-to-toe framing, face deliberately plain and unremarkable.
+Garments, described by shape and material only:
+[ท่อนบน: มี/ไม่มี · วัสดุ · ความยาว · แขน]
+[ท่อนล่าง: ผ้าพัน/นุ่ง · ยาวถึงไหน · การเก็บชาย]
+[ศีรษะ: โพก/ผูก/ไม่มี · ทรง]
+[เท้า: เปล่า/รองเท้าแบบไหน]
+[อาวุธและของพก: รูปทรง วัสดุ วิธีถือหรือสะพาย]
+[เครื่องป้องกัน: มีหรือไม่มี ถ้ามี ทำจากอะไร]
+
+not in frame: [ชุดของชาติที่โมเดลมักหลุดไปหา — ดู §13-3]
++ §6.4 BASE LOOK
+```
+**ห้ามใช้ชื่อชาติหรือชื่ออาณาจักรในบรรทัดไหนเลย** เขียนแต่รูปทรงและวัสดุ — นี่คือทั้งหมดของท่านี้
+
+### 6.6 Crowd sheet — จำเป็นทุกครั้งที่มีคนเกินหนึ่งในเฟรม
+
+```
+A group of [5–8] different people standing together, full-body, plain seamless
+background, even flat lighting. Every person is a visibly distinct individual:
+different ages from young adult to elderly, different heights and builds,
+different face shapes, different hair, different skin tones within the same
+regional population. No two people resemble each other. No one in this image is
+the protagonist. Wearing [ชุดตาม §6.5].
++ §6.4 BASE LOOK
+```
+ใบนี้ทำครั้งเดียวใช้ได้ทั้งเรื่อง มันคือคลังหน้าที่โมเดลจะหยิบไปแจกให้ตัวประกอบ
+**แทนที่จะแจกหน้าตัวเอกให้ทุกคน**
 
 ---
 
@@ -304,11 +386,18 @@ PR    : PR-03 เชือกคาดมือ · PR-05 กองไฟที�
 CAM   : เลนส์ 35mm · แฮนด์เฮลด์เบา · ไล่ ECU → MEDIUM → WIDE
 LGT   : กองไฟกองเดียว มาจากด้านข้างระดับต่ำ · ไม่มีแสงเติม · หลังดำสนิท
 SFX   : SFX-04 ลมหายใจเป็นจังหวะ · SFX-07 เท้าบดดิน · SFX-02 ไฟแตกเบา
-REF   : [LOC-02, CH-01, PR-03]
+REF   : [CH-01, LOC-02, PR-03]   # ช็อตนี้มีคนเดียว จึงส่ง CH ได้ และส่งเป็นตัวแรก
 ```
 
-`REF` คือสิ่งที่ส่งเข้า `image_references` **เรียงตามลำดับนี้เสมอ: สถานที่ → ตัวละคร → พร็อพ**
-สลับลำดับแล้วโมเดลจะให้น้ำหนักผิดตัว
+`REF` คือสิ่งที่ส่งเข้า `image_references` **ลำดับ = ลำดับความสำคัญ ตัวแรกได้น้ำหนักมากที่สุด**
+เพราะฉะนั้นลำดับไม่ตายตัว แต่ขึ้นกับว่าช็อตนั้นมีคนกี่คน:
+
+| ชนิดช็อต | ส่งอะไร เรียงยังไง | เหตุผล |
+|---|---|---|
+| ตัวเอกอยู่คนเดียวในเฟรม | `CH` → `LOC` → `PR` | หน้าต้องชนะทุกอย่าง |
+| มีคนหลายคน / ฝูงชน | `LOC` → `CROWD` → `WD` — **ห้ามส่ง `CH`** | ส่ง `CH` เมื่อไหร่ ทุกคนหน้าเหมือนกันหมด (§13-2) |
+| ไม่มีคนในเฟรม (พร็อพ/สถานที่) | `LOC` → `PR` | ไม่มีอะไรให้ bleed |
+| กลุ่มคนที่มีชุดเฉพาะ | `LOC` → `WD` (costume sheet) | ชุดต้องชนะ ไม่งั้นได้ชุดผิดชาติ (§13-3) |
 
 **บรรทัดพวกนี้ไม่ได้อยู่แค่ในเอกสาร — มันแปลงตรงเข้า prompt** ตามตารางนี้:
 
@@ -347,7 +436,7 @@ REF   : [LOC-02, CH-01, PR-03]
 - [ ] `WD` ไล่ต่อเนื่องตั้งแต่คลิปแรกถึงคลิปสุดท้าย ไม่มีจุดที่ความเสียหายหายไป
 - [ ] ไม่มี `LOC` เดียวกันติดกันเกิน 2 คลิป
 - [ ] ทุกคลิปมี `SFX` ครบ 3 ชั้น
-- [ ] `REF` เรียงสถานที่ → ตัวละคร → พร็อพ ทุกบรรทัด
+- [ ] `REF` ของทุกคลิปเรียงถูกตามชนิดช็อต และ **ช็อตที่มีคนหลายคนไม่มี `CH` อยู่ใน REF**
 - [ ] `PR` ทุกชิ้นมีที่มา ไม่มีของโผล่มาลอย ๆ
 
 ---
@@ -418,6 +507,11 @@ REF   : [LOC-02, CH-01, PR-03]
 - [ ] **ทุก `ELEMENTS` มีท่อน "สิ่งที่ห้ามมีในเฟรม"**
 - [ ] `WD` ในprompt ตรงกับสภาพสะสมของคลิปนั้น ไม่มีแผลหายกลางเรื่อง
 - [ ] หน้าตัวละครตรงกับ character sheet ทุกคลิป
+- [ ] **ไม่มีคลิปไหนที่ตัวประกอบหน้าเหมือนตัวเอก** (§13-2)
+- [ ] **เครื่องแต่งกายตรง costume sheet ไม่ใช่ชุดของชาติอื่น** (§13-3)
+- [ ] **ภาพอ่านเป็นฟุตเทจถ่ายจริง ไม่ใช่เกมหรือ CG** (§13-5)
+- [ ] เสียงบรรยากาศต่อเนื่องทั้งตอน ไม่ขาดตรงรอยต่อคลิป (§13-1)
+- [ ] SFX ทุกตัววางตรงกับสิ่งที่เห็นในภาพจริง (§13-4)
 - [ ] `aspect` และ `resolution` ตรงกันหมด ไม่มีคลิปหลุดสัดส่วน
 - [ ] ไม่มีคลิปไหนที่ตัวละครขยับปากพูด (ถ้าใช้พากย์แยก)
 - [ ] ไม่มีดนตรีหลุดเข้ามา (ถ้า `music: false`)
@@ -437,7 +531,125 @@ REF   : [LOC-02, CH-01, PR-03]
 | งาน | settings | ผล |
 |---|---|---|
 | ร.ศ. 112 | ep 1 · 5 นาที · 10 วิ/คลิป · 16:9 | 30 คลิป · ต้องใช้ ~935 เครดิต · **เกินงบ** เลยส่งเป็น prompt ให้ผู้ใช้ไปเจนเอง |
-| นายขนมต้ม | ep 10 · 1 นาที · 15 วิ/คลิป · 9:16 · fast | 40 คลิป · 2,100 เครดิต · เครดิตมี 781.5 → ทำได้ 3 ตอนเต็ม |
+| นายขนมต้ม (วางแผน) | ep 10 · 1 นาที · 15 วิ/คลิป · 9:16 · fast | 40 คลิป · 2,100 เครดิต · เครดิตมี 781.5 → ทำได้ 3 ตอนเต็ม |
+| นายขนมต้ม EP1 (รันจริง) | 4 คลิป · 15 วิ · 9:16 · fast · native audio on · ref = LOC + CH | **ตก 5 ข้อ** เสียงไม่ต่อ + มีเพลง · ทุกคนหน้าเหมือนกัน · ชุดเป็นเกราะจีน · SFX ไม่ตรงภาพ · ภาพเหมือนเกม → §13 |
 
-**บทเรียนที่ซ้ำกันสองงาน:** ประเมินงบ **ก่อน** เขียนสคริปต์เสมอ
-`คลิปทั้งหมด × clip_seconds × อัตรา/วินาที` คือเลขบรรทัดแรกที่ต้องรู้ ไม่ใช่บรรทัดสุดท้าย
+**บทเรียนที่ซ้ำกันทุกงาน:**
+1. ประเมินงบ **ก่อน** เขียนสคริปต์ `คลิปทั้งหมด × clip_seconds × อัตรา/วินาที` คือเลขบรรทัดแรกที่ต้องรู้
+2. **ยิงคลิปเดียวก่อนเสมอ** ก่อนยิงยกตอน — รอบ EP1 เสียไป 4 คลิปเพราะข้ามขั้นนี้
+3. ปัญหาสไตล์เกือบทั้งหมดต้องแก้ที่ **ภาพนิ่ง** ซึ่งฟรี ไม่ใช่ที่คลิป ซึ่งไม่ฟรี
+
+---
+
+## 13. อาการที่เจอจริง → สาเหตุ → วิธีแก้
+
+บันทึกจากการรันจริง ไม่ใช่การเดา ทุกข้อระบุว่าต้องแก้ที่ **ขั้นไหน** เพราะหลายข้อแก้ที่ prompt ไม่ได้
+
+| # | อาการ | สาเหตุจริง | แก้ที่ขั้น |
+|---|---|---|---|
+| 1 | เสียงระหว่างคลิปไม่ต่อกัน มีเพลงโผล่มาทั้งที่สั่งห้าม | โมเดลเจนเสียงของแต่ละคลิป**แยกกันโดยสิ้นเชิง** ไม่รู้ว่ามีคลิปก่อนหน้า | ตั้งค่า + ตัดต่อ |
+| 2 | ทุกคนในเฟรมหน้าเหมือนกันหมด | identity bleed จาก character reference | การส่ง reference |
+| 3 | ชุดทหารกลายเป็นเกราะแบบจีน | ไม่มี costume sheet + ใช้คำเรียกชาติแทนคำบรรยายรูปทรง | asset + prompt |
+| 4 | SFX ไม่ตรงกับภาพ | เหมือนข้อ 1 + ตัด 5–6 จังหวะใน 15 วิ เร็วเกินกว่าเสียงจะตามทัน | ตั้งค่า + ตัดต่อ |
+| 5 | ภาพยังเหมือนเกม/การ์ตูน | 5 สาเหตุซ้อนกัน ดู §13-5 | ทุกขั้น |
+
+### 13-1 · เสียงไม่ต่อเนื่อง และมีเพลงโผล่มา
+
+**สาเหตุ:** native audio ถูกเจนต่อคลิป โดยไม่มีบริบทของคลิปข้างเคียง **ความต่อเนื่องจึงเป็นไปไม่ได้เชิงโครงสร้าง**
+ไม่ใช่ prompt ไม่ดี และคำสั่ง `no music` ก็ไม่ผูกมัดโมเดล มันเป็นแค่น้ำหนัก ไม่ใช่กฎ
+
+**แก้:**
+1. ตั้ง `generate_audio: false` ทุกคลิป — **ราคาเท่าเดิม ไม่มีอะไรเสีย** (§3)
+2. ทำเสียงบรรยากาศ **เส้นเดียวยาวตลอดทั้งตอน** ในโปรแกรมตัดต่อ แล้ววาง spot SFX ทับตามจังหวะภาพ
+3. ลบบรรทัด `AUDIO:` ออกจาก prompt ตาม §6.4
+
+> ถ้ายังอยากได้เสียงจากโมเดลไว้เป็นตัวอ้างอิง ให้เจนแยกไว้ฟังเฉย ๆ **อย่าเอาเข้าไฟล์ตัดต่อ**
+
+### 13-2 · ทุกคนหน้าเหมือน character reference (identity bleed)
+
+**สาเหตุ:** เมื่อส่ง character sheet เข้า `image_references` โมเดลเข้าใจว่า **"นี่คือหน้าของคนในคลิปนี้"**
+ไม่ใช่ "นี่คือหน้าของคนคนหนึ่ง" พอมีมนุษย์หลายคนในเฟรม มันจึงแจกหน้าเดียวกันให้ทุกคน
+ยิ่งส่ง reference น้อยชนิด ยิ่งเบลอหนัก
+
+**แก้ — เรียงตามลำดับที่ควรลองก่อนหลัง:**
+1. **ช็อตที่มีคนหลายคน: ไม่ต้องส่ง character sheet เลย** ส่งแค่ `LOC` + `crowd sheet` แล้วบรรยายตัวเอกด้วยคำ
+2. **แยกช็อตให้ชัด** ช็อตพระเอก = ส่ง `CH-01` · ช็อตฝูงชน = ไม่ส่ง · ช็อตที่มีทั้งคู่ = จัดให้คนอื่นเป็นเงา หันหลัง หรือหลุดโฟกัส
+3. **ทำ crowd sheet** — ภาพเดียวที่มีคน 5–8 คน หน้าตา อายุ รูปร่างต่างกันชัด ส่งเข้าไปคู่กับ `CH-01`
+   ให้โมเดลมีหน้ามากกว่าหนึ่งแบบให้เลือก
+4. **เขียนกันไว้ในบรรทัด ELEMENTS ทุกครั้งที่มีคนเกินหนึ่ง:**
+   ```
+   only CH-01 has the referenced face; every other person is a different
+   individual with a different face, age, build and hair — background people
+   must not resemble the reference
+   ```
+5. ตัวละครที่มีชื่อทุกตัว **ต้องมี sheet ของตัวเอง** อย่าให้ตัวเอกเป็น reference เดียวทั้งเรื่อง
+
+### 13-3 · เครื่องแต่งกายกลายเป็นของอีกชาติ
+
+**สาเหตุ:** คำว่า `Burmese` `Siamese` `Ayutthaya` มีตัวอย่างในชุดข้อมูลน้อยมาก เมื่อโมเดลไม่มีของจริงจะอ้างอิง
+มันจะถอยไปหา **ค่ากลางของ "ทหารเอเชียโบราณ" ซึ่งคือจีน** (เกราะเกล็ด บ่าตั้ง หมวกทรงกรวย)
+ซ้ำร้าย ไม่มี costume sheet อยู่ในสายอ้างอิงเลย — มันจึงไม่มีอะไรให้ยึด
+
+**แก้:**
+1. **ทำ costume sheet เป็นภาพจริง** (ฟรี) แล้วส่งเข้า `image_references` ทุกคลิปที่มีกลุ่มนั้น
+   ทำเป็น sheet เต็มตัวหน้า-หลัง คนเดียว พื้นขาว เหมือน character sheet
+2. **เลิกเรียกด้วยชื่อชาติ บรรยายด้วยรูปทรงและวัสดุแทน** เช่น
+   ```
+   bare-chested or wearing a short unlined cotton jacket, a length of cloth
+   wrapped and tucked at the waist reaching mid-calf, bare legs below the knee,
+   bare feet or simple leather sandals, a cloth turban wrapped low on the head,
+   a plain lacquered shield and a single-edged blade, no metal body armour
+   ```
+3. **ใส่ negative ตรง ๆ ในบรรทัด ELEMENTS:**
+   ```
+   not in frame: Chinese armour, lamellar or scale plate, shoulder pauldrons,
+   conical metal helmets, wuxia costume, Ming or Qing dynasty dress, samurai
+   armour, Japanese elements, Korean hanbok, any full-body metal armour
+   ```
+4. ถ้ายังหลุด ให้ **ล็อกด้วยคีย์เฟรม** — เจนภาพนิ่งที่ชุดถูกต้องก่อน แล้วส่งเป็น `start_image`
+   วิดีโอจะตามภาพเปิดเสมอ
+
+### 13-4 · SFX ไม่ตรงกับภาพ
+
+**สาเหตุ:** เหมือน §13-1 บวกกับปัญหาโครงสร้าง — คลิป 15 วิที่มี 5–6 จังหวะตัด
+คือ **เสียงต้องเปลี่ยนทุก 2.5 วินาที** ซึ่ง native audio ทำไม่ได้ มันเจนเป็นก้อนเดียวจบ
+
+**แก้:**
+1. ปิดเสียงโมเดล แล้ว **เปลี่ยนหน้าที่ของบรรทัด `SFX:` ใน prompt** จาก "คำสั่งให้โมเดล"
+   เป็น **"ใบสั่งงานให้คนตัดต่อ"** — เก็บไว้ในสคริปต์ ไม่ต้องส่งเข้าโมเดล
+2. เขียนใหม่เป็นรายการที่มี timecode จริง เพราะตอนนี้คุณมีภาพแล้ว รู้แล้วว่าอะไรอยู่วินาทีไหน
+   ```
+   SFX (post) — EP1 CLIP2
+   00:00.0  ผ้าเสียดสี, เบา
+   00:02.4  เท้าเหยียบดินแห้ง ×2
+   00:05.8  ศอกผ่าอากาศ (ตรงรอยตัด SHOT C)
+   00:09.1  หายใจออกทางจมูก
+   00:12.0  เงียบสนิทถึงจบ ยกเว้น room tone
+   ```
+3. ถ้ายืนยันจะใช้ native audio จริง ๆ ให้ **ลดเหลือ 2–3 จังหวะต่อคลิป** เสียงถึงจะตามทัน
+   แต่จะแลกกับความเร็วของการตัดที่หายไป — งานละครสั้นไม่คุ้ม
+
+### 13-5 · ภาพยังเหมือนเกม ไม่เหมือนหนัง
+
+**นี่คือข้อที่มีหลายสาเหตุซ้อนกัน แก้ทีละข้อไม่พอ ต้องแก้พร้อมกัน**
+
+| สาเหตุ | ทำไมถึงทำให้เป็นเกม | แก้ |
+|---|---|---|
+| **ก. `mode: fast`** | โหมดเร็วลดขั้นตอนคำนวณ ผลคือพื้นผิวเรียบและแสงง่าย = หน้าตาเกม | ใช้ `mode: std` |
+| **ข. คีย์เฟรมเป็น CG อยู่แล้ว** | **วิดีโอสืบทอดสไตล์จากภาพเปิดเสมอ** ถ้าภาพนิ่งดูเป็นเกม คลิปจะเป็นเกม 100% | เจนคีย์เฟรมใหม่ด้วย prompt สายภาพถ่าย ตรวจให้ผ่านก่อนค่อยไปต่อ |
+| **ค. คำว่า `cinematic` และพวกพ้อง** | ในชุดข้อมูล คำพวกนี้ติดมากับภาพ CG ภาพเกม และ concept art ไม่ใช่ฟุตเทจจริง | ลบทิ้งทั้งหมด ดูรายการคำต้องห้ามใน §6.4 |
+| **ง. ไม่ได้บรรยายพฤติกรรมของกล้องจริง** | บอกชื่อรุ่นกล้องไม่ได้ผล โมเดลไม่รู้จัก "Alexa 35" ในเชิงภาพ แต่รู้จัก motion blur, focus falloff, sensor noise | ใช้ BASE LOOK เวอร์ชัน live-action §6.4 |
+| **จ. ไม่มี negative กันภาพ CG** | ไม่บอกว่าไม่เอาอะไร มันก็ให้ค่ากลาง ซึ่งค่ากลางของ AI คือภาพสวยเนียนแบบ 3D | ใส่ท่อน `NOT:` ทั้งท่อนจาก §6.4 |
+| **ฉ. bitrate ต่ำ** | การบีบอัดกลืนเกรนและรายละเอียดผิว เหลือแต่พื้นผิวเรียบ = พลาสติก | `bitrate_mode: high` |
+
+**ผลต่อค่าใช้จ่าย:** `fast → std` ที่ 15 วิ = 52.5 → 67.5 เครดิต/คลิป (**+15/คลิป, +60/ตอน**)
+งานสมจริงจ่ายส่วนนี้คุ้ม งานสไตไลซ์ไม่ต้องจ่าย
+
+### 13-6 · กฎที่ได้จากรอบนี้ — ห้ามลืม
+
+1. **ห้ามยิงทั้งตอนด้วย prompt ที่ยังไม่เคยผ่านตา** ยิง **1 คลิป** ด้วยชุดใหม่ ดูก่อน ผ่านแล้วค่อยยิงที่เหลือ
+   รอบนี้เสียไป 4 คลิปเพราะยิงยกตอน — ที่ `std` คือ 270 เครดิต
+2. **ปัญหาสไตล์ให้แก้ที่ภาพนิ่งก่อนเสมอ** ภาพนิ่งฟรี วิดีโอไม่ฟรี ถ้าภาพนิ่งยังไม่เหมือนหนัง วิดีโอไม่มีทางเหมือน
+3. **reference ที่ไม่ได้ตั้งใจส่ง คือ reference ที่ทำงานผิด** ทุกครั้งที่ใส่ `image_references` ให้ถามว่า
+   "ถ้าโมเดลเอาอันนี้ไปใช้กับ**ทุกอย่าง**ในเฟรม จะพังไหม"
+4. **ชื่อ (ชาติ ยุค รุ่นกล้อง) ไม่ทำงาน คำบรรยายรูปทรงและพฤติกรรมทำงาน** ใช้กับทั้งชุด ทั้งกล้อง ทั้งสถานที่
