@@ -3,6 +3,25 @@
 All notable changes to ENLOOP are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+- **ENSELL** (`ensell/`) — a sibling skill for affiliate / TikTok Shop selling
+  clips. Carries ENLOOP's loop machinery unchanged and adds:
+  - a **5-beat sell spine** (สะกิด เห็นของ เชื่อ ค้าน กด) in place of ENSTORY's
+    6-slot story spine, because a 25-second clip has no room for ฐาน→ลง;
+  - the **cart rule** ([C1] cue never before the demo lands, [C2] two cue points,
+    [C3] the reason to act now must be real) — ปักตะกร้า becomes a graded
+    timestamp instead of a closing pleasantry;
+  - a **claim gate** that blocks อย.-forbidden wording and TikTok Shop's banned
+    scarcity / impossible-result claims before a script ships, and converts each
+    blocked phrase into something the camera can show;
+  - **PICK mode** — scores candidate products on 5 axes before a word is written;
+  - **REPAIR mode** for the clip that got views and no orders.
+- `ensell/references/` — product-scoring rubric, Thai claim-compliance list with
+  sources, and channel/format criteria (clip length ↔ word count, cue timing
+  bands, platform file specs and posting caps).
+
 ## [3.0.0] — 2026-07-29
 
 First public release.
