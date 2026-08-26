@@ -52,3 +52,39 @@
 
 - ต้องอัปโหลดภาพเข้า Higgsfield ก่อน (`media_upload` → PUT bytes → `media_confirm`) แล้วส่ง `media_id` เป็น `start_image`
 - ถ้าเจอ error `Preset "..." was recommended instead of submitting a job` ให้ส่งซ้ำพร้อม `declined_preset_id` ตามที่ error บอก
+
+---
+
+# รอบ 2 — ลูกค้าเลือกแบบ B (Room Builds Itself)
+
+setting เดิมทุกอย่าง (`seedance_2_5` / `omni_reference` / 5s / 720p / 9:16 / high bitrate / ไม่มีเสียง)
+เพิ่มภาพห้องอ้างอิงเข้าไปอีกใบ [`reference_styled_room.jpg`](./reference_styled_room.jpg) เป็น `image_references`
+เพื่อล็อกปลายทางให้เป็นมุมกาแฟ Scandinavian โทนครีม/โอ๊ค/ลินิน ตามภาพที่ลูกค้าส่งมา
+
+medias ที่ใช้:
+```json
+[
+  { "value": "<counter_media_id>", "role": "start_image" },
+  { "value": "<styled_room_media_id>", "role": "image_references" }
+]
+```
+
+องค์ประกอบปลายทางที่ระบุในทุก prompt: ราวไม้แขวนแก้วขาว, โปสเตอร์กรอบขาว coffee recipe,
+รถเข็นเหล็กดำ 3 ชั้นใส่ถุงกาแฟ/โหลแก้ว, พรมปอ, ม้านั่งไม้ + ผ้าห่มพับ + ตะกร้าสาน, ผ้าม่านลินินครีม
+
+## ผลลัพธ์
+
+### B2 — Light Reveal (จบด้วยแสงเช้าสาดเข้าห้อง)
+สร้างห้องจากพื้น → ของแต่ง → ระลอกสุดท้ายหน้าต่าง + ม่านลินินลงมา แล้วแสงเช้าสาดทั่วห้อง
+- job: `428dcd16-ef38-4a84-919a-cc631064f045`
+- https://d8j0ntlcm91z4.cloudfront.net/user_2wLnuD5kGfy43k7VfCCwovSE0aN/hf_20260826_030311_428dcd16-ef38-4a84-919a-cc631064f045.mp4
+
+### B3 — Tight to Wide (กล้องถอยเผยห้องไปพร้อมการประกอบ)
+เริ่มเฟรมชิดเคาน์เตอร์ กล้องถอยหลังทีละระลอก จบที่ภาพกว้างเห็นห้องครบ
+- job: `0384aab3-ba71-48c3-b8c9-722836bc63d7`
+- https://d8j0ntlcm91z4.cloudfront.net/user_2wLnuD5kGfy43k7VfCCwovSE0aN/hf_20260826_030312_0384aab3-ba71-48c3-b8c9-722836bc63d7.mp4
+
+### B1 — Faithful (ยังไม่ได้เรนเดอร์)
+เวอร์ชันที่ตามภาพอ้างอิงตรงที่สุด กล้องล็อกนิ่งแล้วถอยนิดเดียวตอนจบ
+ส่งไม่ผ่านเพราะเครดิต Higgsfield ไม่พอ (`Out of credits on plus (monthly) plan`)
+prompt พร้อมรันอยู่ใน [`prompts.md`](./prompts.md) เติมเครดิตแล้วส่งซ้ำได้เลย
